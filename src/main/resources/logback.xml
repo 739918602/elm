@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- 控制台输出配置 -->
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder charset="utf-8">
+            <Pattern>[%date{yyyy-MM-dd HH:mm:ss}] [%-5level] %logger %line --%mdc{client} %msg%n</Pattern>
+        </encoder>
+    </appender>
+
+    <!-- INFO 输出配置 -->
+    <appender name="logInfoFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>/data/appLogs/elm-info.log</File>
+        <encoder>
+            <Pattern>[%date] [%-5level] %logger %line --%mdc{client} [%X{TRACE_LOG_ID}] %msg%n</Pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/data/appLogs/elm-info_%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <TimeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>512MB</maxFileSize>
+            </TimeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- ERROR 输出配置 -->
+    <appender name="logErrorFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>/data/appLogs/elm-error.log</File>
+        <encoder>
+            <Pattern>[%date] [%-5level] %logger %line --%mdc{client} %msg%n</Pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/data/appLogs/elm-error_%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <TimeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>512MB</maxFileSize>
+            </TimeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- 日志输出适配器配置 -->
+    <root level="INFO" name="com.electronicbusiness,com.crowdfunding">
+        <appender-ref ref="stdout"/>
+        <appender-ref ref="logInfoFile"/>
+        <appender-ref ref="logErrorFile"/>
+    </root>
+
+</configuration>
