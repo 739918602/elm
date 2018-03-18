@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.mongodb.client.result.UpdateResult;
 import com.zys.elm.models.ElmCookie;
 import com.zys.elm.models.HongBaoBean;
+import com.zys.elm.models.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -15,8 +16,13 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -30,9 +36,10 @@ import java.util.List;
 public class ElmService {
     @Autowired
     private MongoTemplate template;
-    static String url = "https://h5.ele.me/restapi/marketing/promotion/weixin/E4FE53B6EF2B888BAC2F6E0B8FB08417";
+    static String url = "https://h5.ele.me/restapi/marketing/promotion/weixin/E5C59809F107C96E15816B55BCC81009";
     public static HongBaoBean getHongbao(String group_sn, String sign,String phone){
         Connection conn = Jsoup.connect(url)
+                .ignoreHttpErrors(true)
                 .ignoreContentType(true)
                 .header("Content-Type","application/json")
                 .requestBody("{\"method\":\"phone\",\"group_sn\":\""+group_sn+"\",\"sign\":\""+sign+"\",\"phone\":\""+phone+"\",\"device_id\":\"\",\"hardware_id\":\"\",\"platform\":0,\"track_id\":\"undefined\",\"weixin_avatar\":\"http://thirdqq.qlogo.cn/qqapp/101204453/E5C59809F107C96E15816B55BCC81009/40\",\"weixin_username\":\"-1\",\"unionid\":\"fuck\"}");
@@ -53,35 +60,70 @@ public class ElmService {
         HongBaoBean hongBaoBean = JSONObject.parseObject(json, HongBaoBean.class);
         return hongBaoBean;
     }
-    public boolean addCookie(String cookie){
+    public String addCookie(Model mod, String cookie){
+        try {
+            cookie=URLDecoder.decode(cookie,"UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         String eleme_key = StringUtils.substringBetween(cookie,"eleme_key\":\"","\",");
+        System.out.println(eleme_key);
         HongBaoBean hongBaoBean = getHongbao("29eb176201b0980c",eleme_key,"");
-        if(hongBaoBean!=null){
+        if(hongBaoBean!=null&&hongBaoBean.getAccount()!=null){
+            log.info("获取红包信息成功,{}",hongBaoBean.getAccount());
             ElmCookie elmCookie = new ElmCookie();
             elmCookie.setElemeKey(eleme_key);
             elmCookie.setPhone(hongBaoBean.getAccount());
+            elmCookie.setAvailable(true);
             Query query = new Query();
             query.addCriteria(Criteria.where("phone").is(elmCookie.getPhone()));
             Update update = new Update();
             update.addToSet("elemeKey",elmCookie.getElemeKey());
             UpdateResult result = template.upsert(query, update,ElmCookie.class);
-            return result.getMatchedCount()>0;
+            if(result.getMatchedCount()>0){
+                log.info("添加成功！");
+                mod.addAttribute("addRes",new Response<>(true));
+                return "index";
+            }
+        }else{
+            log.info("红包信息获取失败");
         }
-        return false;
+        mod.addAttribute("addRes",new Response<>("01","添加失败"));
+        return "index";
     }
 
-    public boolean getMaxHongBao(String phone,String hbUrl){
-        String sn = StringUtils.substringBetween(hbUrl,"&sn=","&");
-        String lucky_number = StringUtils.substringBetween(hbUrl,"&lucky_number=","&");
+    public String getMaxHongBao(Model mod ,String phone,String hbUrl){
+        String sn ="";
+        int lucky_number=0;
+        try {
+            StringUtils.substringBetween(hbUrl,"&sn=","&");
+            lucky_number = Integer.valueOf(StringUtils.substringBetween(hbUrl,"&lucky_number=","&"));
+        }catch (Exception e){
+            mod.addAttribute("res",new Response<>("11","红包地址错误"));
+            log.info("红包地址错误");
+            log.error("红包地址错误:{}",e);
+        }
         Query query = new Query();
         query.addCriteria(Criteria.where("phone").nin(phone));
+        query.addCriteria(Criteria.where("available").nin(true));
         List<ElmCookie> cookies = template.find(query,ElmCookie.class);
         if(cookies==null || cookies.size()==0){
-            return false;
+            mod.addAttribute("res",new Response<>("12","没有可用cookies"));
+            return "index";
         }
+        Iterator<ElmCookie> iterator =  cookies.iterator();
         try {
-            cookies.forEach(cookie->{
+            int i = 0;
+            while ((i < Integer.valueOf(lucky_number))&&iterator.hasNext()) {
+                ElmCookie cookie = iterator.next();
                 HongBaoBean hongBaoBean = getHongbao(sn,cookie.getElemeKey(),cookie.getPhone());
+                if(hongBaoBean!=null){
+                    i++;
+                }else{
+                    log.info("现有cookie领取红包失败:{}",phone);
+                    template.updateFirst(query,Update.update("available",false),ElmCookie.class);
+                    continue;
+                }
                 int currentSize = hongBaoBean.getPromotion_records().size() + 2;
                 if(currentSize == Integer.valueOf(lucky_number)){
                     Query q = new Query();
@@ -89,13 +131,20 @@ public class ElmService {
                     ElmCookie ck = template.findOne(q,ElmCookie.class);
                     HongBaoBean maxHongBao = getHongbao(sn,ck.getElemeKey(),ck.getPhone());
                     log.info(maxHongBao.toString());
-                    return;
+                    break;
                 }
-            });
+            }
+            if(i<lucky_number){
+                mod.addAttribute("res",new Response<>("13","cookies不够用了"));
+                return "index";
+            }
+       
         }catch (Exception e){
             log.error("领取失败,{}",e);
-            return false;
+            mod.addAttribute("res",new Response<>("15","领取失败"));
+            return "index";
         }
-        return true;
+        mod.addAttribute("res",new Response<>(true));
+        return "index";
     }
 }

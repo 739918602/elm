@@ -3,6 +3,7 @@ package com.zys.elm.ctr;
 import com.zys.elm.service.ElmService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -17,11 +18,11 @@ public class ElmCtr {
     @Autowired
     private ElmService service;
     @RequestMapping(value = "/addCookie",method = RequestMethod.POST)
-    public boolean addCookie(String cookie){
-        return service.addCookie(cookie);
+    public String addCookie(Model mod,String cookie){
+        return service.addCookie(mod,cookie);
     }
     @RequestMapping(value = "/getMaxHongBao",method = RequestMethod.POST)
-    public boolean getMaxHongBao(String phone,String hbUrl){
-        return service.getMaxHongBao(phone,hbUrl);
+    public String getMaxHongBao(Model mod,String phone,String hbUrl){
+        return service.getMaxHongBao(mod,phone,hbUrl);
     }
 }

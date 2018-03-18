@@ -6,33 +6,40 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/index.css}">
     <script th:src="@{/layui/layui.js}"></script>
     <script th:src="@{/js/index.js}"></script>
+
 </head>
 <body>
 
 <div class="layui-tab layui-tab-brief" lay-filter="tabSwitch">
-    <ul class="layui-tab-title">
+    <ul class="layui-tab-title" id="head">
         <li class="layui-this">贡献Cookie</li>
         <li>领取最大红包</li>
         <li>如何获取cookie</li>
     </ul>
-    <div class="layui-tab-content">
+    <div class="layui-tab-content" id="content">
         <div class="layui-tab-item layui-show">
-            <form action="" method="post">
-                <textarea name="cookie" cols="30" rows="10"></textarea>
-                <input type="submit" value="提交"/>
+            <form action="addCookie" method="post" class="layui-form layui-form-pane">
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">输入Cookie</label>
+                    <div class="layui-input-block">
+                        <textarea placeholder="请输入内容" class="layui-textarea" name="cookie"></textarea>
+                    </div>
+                </div>
+                <input type="submit" class="layui-btn layui-btn-fluid" value="提交"/>
             </form>
+        </div>
+        <div class="layui-tab-item">
+            2333331
         </div>
         <div class="layui-tab-item">
             <div th:include="help::#help"></div>
         </div>
-        <div class="layui-tab-item">
-            内容2
-        </div>
     </div>
 </div>
-
+    
     <script src="https://cdn.bootcss.com/canvas-nest.js/1.0.1/canvas-nest.min.js"></script>
 </body>
 </html>
