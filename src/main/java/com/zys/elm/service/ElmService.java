@@ -81,7 +81,7 @@ public class ElmService {
             Update update = new Update();
             update.addToSet("elemeKey",elmCookie.getElemeKey());
             UpdateResult result = template.upsert(query, update,ElmCookie.class);
-            if(result.getModifiedCount()>0){
+            if(result.getMatchedCount()>0){
                 log.info("添加成功！");
                 mod.addAttribute("addRes",new Response<>(true));
                 return "index";
