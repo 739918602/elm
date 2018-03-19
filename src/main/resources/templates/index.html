@@ -23,23 +23,52 @@
         <div class="layui-tab-item layui-show">
             <form action="addCookie" method="post" class="layui-form layui-form-pane">
                 <div class="layui-form-item layui-form-text">
-                    <label class="layui-form-label">输入Cookie</label>
+                    <label class="layui-form-label">请使用绑定过手机号的帐号</label>
                     <div class="layui-input-block">
-                        <textarea placeholder="请输入内容" class="layui-textarea" name="cookie"></textarea>
+                        <textarea placeholder="请输入Cookie" class="layui-textarea" name="cookie"></textarea>
                     </div>
                 </div>
                 <input type="submit" class="layui-btn layui-btn-fluid" value="提交"/>
             </form>
         </div>
         <div class="layui-tab-item">
-            2333331
+            <form action="getMaxHongBao" method="post" class="layui-form layui-form-pane">
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">输入Cookie</label>
+                    <div class="layui-input-block">
+                        <input type="text" placeholder="请输入手机号" name="phone" autocomplete="off" class="layui-input">
+                        <textarea placeholder="请输入红包地址" class="layui-textarea" name="hbUrl"></textarea>
+                    </div>
+                </div>
+                <input type="submit" class="layui-btn layui-btn-fluid" value="提交"/>
+            </form>
         </div>
         <div class="layui-tab-item">
             <div th:include="help::#help"></div>
         </div>
     </div>
 </div>
-    
+    <script th:inline="JavaScript">
+        layui.use('layer', function(){
+            var layer = layui.layer;
+            var addRes = [[${addRes}]];
+            var res = [[${res}]];
+            if(addRes!=null){
+                if(addRes.success){
+                    layer.msg("添加cookie成功!");
+                }else{
+                    layer.msg(addRes.msg);
+                }
+            }
+            if(res!=null){
+                if(res.success){
+                    layer.msg("添加cookie成功!");
+                }else{
+                    layer.msg(addRes.msg);
+                }
+            }
+        });
+    </script>
     <script src="https://cdn.bootcss.com/canvas-nest.js/1.0.1/canvas-nest.min.js"></script>
 </body>
 </html>
