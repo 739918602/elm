@@ -37,9 +37,9 @@ import java.util.List;
 public class ElmService {
     @Autowired
     private MongoTemplate template;
-    static String url = "https://h5.ele.me/restapi/marketing/promotion/weixin/E5C59809F107C96E15816B55BCC81009";
-    public static HongBaoBean getHongbao(String group_sn, String sign,String phone){
-        Connection conn = Jsoup.connect(url)
+    static String url = "https://h5.ele.me/restapi/marketing/promotion/weixin/";
+    public static HongBaoBean getHongbao(String uuid,String group_sn, String sign,String phone){
+        Connection conn = Jsoup.connect(url+uuid)
                 .ignoreHttpErrors(true)
                 .ignoreContentType(true)
                 .header("Content-Type","application/json")
@@ -68,12 +68,14 @@ public class ElmService {
             e.printStackTrace();
         }
         String eleme_key = StringUtils.substringBetween(cookie,"eleme_key\":\"","\",");
+        String uuid = StringUtils.substringBetween(cookie,"openid\":\"","\",");
         System.out.println(eleme_key);
-        HongBaoBean hongBaoBean = getHongbao("29eb176201b0980c",eleme_key,"");
+        HongBaoBean hongBaoBean = getHongbao(uuid,"29eb176201b0980c",eleme_key,"");
         if(hongBaoBean!=null&&hongBaoBean.getAccount()!=null){
             log.info("获取红包信息成功,{}",hongBaoBean.getAccount());
             ElmCookie elmCookie = new ElmCookie();
             elmCookie.setElemeKey(eleme_key);
+            elmCookie.setUuid(uuid);
             elmCookie.setPhone(hongBaoBean.getAccount());
             elmCookie.setAvailable(true);
             Query query = new Query();
@@ -118,7 +120,7 @@ public class ElmService {
             int i = 0;
             while ((i < Integer.valueOf(lucky_number))&&iterator.hasNext()) {
                 ElmCookie cookie = iterator.next();
-                HongBaoBean hongBaoBean = getHongbao(sn,cookie.getElemeKey(),cookie.getPhone());
+                HongBaoBean hongBaoBean = getHongbao(cookie.getUuid(),sn,cookie.getElemeKey(),cookie.getPhone());
                 if(hongBaoBean!=null){
                     i++;
                 }else{
@@ -131,7 +133,7 @@ public class ElmService {
                     Query q = new Query();
                     q.addCriteria(Criteria.where("phone").is(phone));
                     ElmCookie ck = template.findOne(q,ElmCookie.class);
-                    HongBaoBean maxHongBao = getHongbao(sn,ck.getElemeKey(),ck.getPhone());
+                    HongBaoBean maxHongBao = getHongbao(ck.getUuid(),sn,ck.getElemeKey(),ck.getPhone());
                     log.info(maxHongBao.toString());
                     break;
                 }

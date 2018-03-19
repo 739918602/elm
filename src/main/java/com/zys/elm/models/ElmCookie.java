@@ -14,5 +14,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class ElmCookie {
     private String phone;
     private String elemeKey;
+    private String uuid;
     private boolean available;
 }
