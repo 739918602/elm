@@ -103,6 +103,7 @@ public class ElmService {
             mod.addAttribute("res",new Response<>("11","红包地址错误"));
             log.info("红包地址错误");
             log.error("红包地址错误:{}",e);
+            return "index";
         }
         Query query = new Query();
         query.addCriteria(Criteria.where("phone").nin(phone));
