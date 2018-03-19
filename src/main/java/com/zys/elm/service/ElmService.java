@@ -78,6 +78,7 @@ public class ElmService {
             elmCookie.setUuid(uuid);
             elmCookie.setPhone(hongBaoBean.getAccount());
             elmCookie.setAvailable(true);
+            log.info(elmCookie.toString());
             Query query = new Query();
             query.addCriteria(Criteria.where("phone").is(elmCookie.getPhone()));
             Update update = new Update();
