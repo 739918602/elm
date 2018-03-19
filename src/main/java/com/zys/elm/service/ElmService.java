@@ -1,6 +1,7 @@
 package com.zys.elm.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.mongodb.WriteResult;
 import com.mongodb.client.result.UpdateResult;
 import com.zys.elm.models.ElmCookie;
 import com.zys.elm.models.HongBaoBean;
@@ -79,8 +80,8 @@ public class ElmService {
             query.addCriteria(Criteria.where("phone").is(elmCookie.getPhone()));
             Update update = new Update();
             update.addToSet("elemeKey",elmCookie.getElemeKey());
-            UpdateResult result = template.upsert(query, update,ElmCookie.class);
-            if(result.getMatchedCount()>0){
+            WriteResult result = template.upsert(query, update,ElmCookie.class);
+            if(result.getN()>0){
                 log.info("添加成功！");
                 mod.addAttribute("addRes",new Response<>(true));
                 return "index";
