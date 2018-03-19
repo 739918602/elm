@@ -80,8 +80,8 @@ public class ElmService {
             query.addCriteria(Criteria.where("phone").is(elmCookie.getPhone()));
             Update update = new Update();
             update.addToSet("elemeKey",elmCookie.getElemeKey());
-            WriteResult result = template.upsert(query, update,ElmCookie.class);
-            if(result.getN()>0){
+            UpdateResult result = template.upsert(query, update,ElmCookie.class);
+            if(result.getModifiedCount()>0){
                 log.info("添加成功！");
                 mod.addAttribute("addRes",new Response<>(true));
                 return "index";
