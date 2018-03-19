@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * @Created with IntelliJ IDEA.
@@ -25,8 +26,8 @@ public class ElmCtr {
     public String getMaxHongBao(Model mod,String phone,String hbUrl){
         return service.getMaxHongBao(mod,phone,hbUrl);
     }
-    @RequestMapping("/")
-    public String welcome(){
-        return "redirect:index.html";
-    }
+    /*@RequestMapping("/")
+    public ModelAndView welcome(){
+        return new ModelAndView("redirect:index.html");
+    }*/
 }
