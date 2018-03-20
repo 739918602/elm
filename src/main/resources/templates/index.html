@@ -61,10 +61,11 @@
                 }
             }
             if(res!=null){
+                console.log(res);
                 if(res.success){
-                    layer.msg("添加cookie成功!");
+                    layer.msg("红包领取成功！");
                 }else{
-                    layer.msg(addRes.msg);
+                    layer.msg(res.msg);
                 }
             }
         });
