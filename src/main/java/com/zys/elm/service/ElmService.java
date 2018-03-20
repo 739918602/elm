@@ -135,6 +135,7 @@ public class ElmService {
                 }
                 int currentSize = hongBaoBean.getPromotion_records().size() + 2;
                 if(currentSize == Integer.valueOf(lucky_number)){
+                    i = currentSize;
                     Query q = new Query();
                     q.addCriteria(Criteria.where("phone").is(phone));
                     ElmCookie ck = template.findOne(q,ElmCookie.class);
