@@ -134,7 +134,7 @@ public class ElmService {
                     template.updateFirst(query,Update.update("available",false),ElmCookie.class);
                     continue;
                 }
-                int currentSize = hongBaoBean.getPromotion_records().size();
+                int currentSize = hongBaoBean.getPromotion_records().size()+1;
                 if(currentSize == Integer.valueOf(lucky_number)){
                     i = currentSize;
                     Query q = new Query();

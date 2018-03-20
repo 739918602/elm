@@ -1,6 +1,7 @@
 package com.zys.elm;
 
 import com.alibaba.fastjson.JSONObject;
+import com.zys.elm.models.ElmCookie;
 import com.zys.elm.models.HongBaoBean;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -11,6 +12,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.net.ssl.*;
@@ -18,9 +21,10 @@ import java.io.IOException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.List;
 
-/*@RunWith(SpringRunner.class)
-@SpringBootTest*/
+@RunWith(SpringRunner.class)
+@SpringBootTest
 @Slf4j
 public class ElmApplicationTests {
 	String url = "https://h5.ele.me/restapi/marketing/promotion/weixin/E5C59809F107C96E15816B55BCC81009";
@@ -67,10 +71,10 @@ public class ElmApplicationTests {
 	}
 	@Test
 	public void connTest(){
-		String u = "https://h5.ele.me/hongbao/#hardware_id=&is_lucky_group=True&lucky_number=8&track_id=&platform=4&sn=29ea3e90f71c6c2f&theme_id=2241&device_id=";
-		String sn = StringUtils.substringBetween(u,"&sn=","&");
-		String lucky_number = StringUtils.substringBetween(u,"&lucky_number=","&");
-		System.out.println(sn);
-		System.out.println(lucky_number);
+		Query query = new Query();
+		query.addCriteria(Criteria.where("phone").nin("13023175728"));
+		query.addCriteria(Criteria.where("available").nin(false));
+		List<ElmCookie> cookies = template.find(query,ElmCookie.class);
+		System.out.println(JSONObject.toJSONString(cookies));
 	}
 }
