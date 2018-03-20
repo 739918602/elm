@@ -23,7 +23,7 @@ import java.security.cert.X509Certificate;
 @SpringBootTest*/
 @Slf4j
 public class ElmApplicationTests {
-	String url = "https://h5.ele.me/restapi/marketing/promotion/weixin/9E4F50FEB7F0E87B97C8782B819A90BA";
+	String url = "https://h5.ele.me/restapi/marketing/promotion/weixin/E5C59809F107C96E15816B55BCC81009";
 	private final static String qqUserAgent = "__guid=154668833.684733284776586600.1521509837953.8892; ubt_ssid=nxrautvsk793iwnkaf022edgrblxd14v_2018-03-20; perf_ssid=uizp1sujssmvtk8s85upl97qbxvo5dbv_2018-03-20; _utrace=354d52e76dc48c7bf5846e015d1e16f0_2018-03-20; snsInfo[101204453]={\"city\":\"怀化\",\"eleme_key\":\"f0208489e8f4b2a89c43fd0b1e45a8cb\",\"figureurl\":\"http://qzapp.qlogo.cn \n" +
 			"/qzapp/101204453/9E4F50FEB7F0E87B97C8782B819A90BA/30\",\"figureurl_1\":\"http://qzapp.qlogo.cn \n" +
 			"/qzapp/101204453/9E4F50FEB7F0E87B97C8782B819A90BA/50\",\"figureurl_2\":\"http://qzapp.qlogo.cn \n" +
@@ -36,20 +36,23 @@ public class ElmApplicationTests {
 	@Test
 	public void contextLoads() throws IOException {
 		//template.insert("");
-		getHongbao("29ea3e90f71c6c2f","f0208489e8f4b2a89c43fd0b1e45a8cb");
+		getHongbao("29ebf7e4391f1c2f","62d1f6c376f6450bdc8962b758966722");
 	}
 	private void getHongbao(String group_sn,String sign){
 		Connection conn = Jsoup.connect(url)
+				.method(Connection.Method.POST)
 				.ignoreHttpErrors(true)
 				.ignoreContentType(true)
 				//.userAgent(qqUserAgent)
 				//.header("Cookie",cookie)
 				.header("Content-Type","application/json")
-				.requestBody("{\"group_sn\":\""+group_sn+"\",\"sign\":\""+sign+"\"\",\"phone\":\""+""+"\"}");
-
+				.requestBody("{\"sign\":\""+sign+"\"" +
+						",\"phone\":\""+"13023175728"+"\"" +
+						",\"group_sn\":\""+ group_sn +"\"" +
+						"}");
 		String json = null;
 		try {
-			json = conn.post().text();
+			json = conn.execute().body();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
