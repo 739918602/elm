@@ -48,7 +48,7 @@ public class ElmService {
                         ",\"phone\":\""+phone+"\"" +
                         ",\"group_sn\":\""+ group_sn +"\"" +
                         "}");;
-
+        log.info(conn.request().requestBody());
         String json = null;
         try {
             json = conn.execute().body();
@@ -104,7 +104,7 @@ public class ElmService {
         String sn ="";
         int lucky_number=0;
         try {
-            StringUtils.substringBetween(hbUrl,"&sn=","&");
+            sn = StringUtils.substringBetween(hbUrl,"&sn=","&");
             lucky_number = Integer.valueOf(StringUtils.substringBetween(hbUrl,"&lucky_number=","&"));
         }catch (Exception e){
             mod.addAttribute("res",new Response<>("11","红包地址错误"));
