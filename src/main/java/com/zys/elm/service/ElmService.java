@@ -121,6 +121,7 @@ public class ElmService {
             int i = 0;
             while ((i < Integer.valueOf(lucky_number))&&iterator.hasNext()) {
                 ElmCookie cookie = iterator.next();
+                log.info(cookie.toString());
                 HongBaoBean hongBaoBean = getHongbao(cookie.getUuid(),sn,cookie.getElemeKey(),cookie.getPhone());
                 if(hongBaoBean!=null){
                     i++;
