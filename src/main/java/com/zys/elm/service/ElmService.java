@@ -105,8 +105,8 @@ public class ElmService {
             log.error("红包地址错误:{}",e);
         }
         Query query = new Query();
-        query.addCriteria(Criteria.where("phone").nin(phone));
-        query.addCriteria(Criteria.where("available").nin(true));
+        query.addCriteria(Criteria.where("phone").is(phone));
+        query.addCriteria(Criteria.where("available").nin(false));
         List<ElmCookie> cookies = template.find(query,ElmCookie.class);
         if(cookies==null || cookies.size()==0){
             mod.addAttribute("res",new Response<>("12","没有可用cookies"));
