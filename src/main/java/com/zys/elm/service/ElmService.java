@@ -109,7 +109,7 @@ public class ElmService {
             return "index";
         }
         Query query = new Query();
-        query.addCriteria(Criteria.where("phone").is(phone));
+        query.addCriteria(Criteria.where("phone").nin(phone));
         query.addCriteria(Criteria.where("available").nin(false));
         List<ElmCookie> cookies = template.find(query,ElmCookie.class);
         if(cookies==null || cookies.size()==0){
