@@ -40,6 +40,7 @@ public class ElmService {
     static String url = "https://h5.ele.me/restapi/marketing/promotion/weixin/";
     public static HongBaoBean getInfo(String uuid,String group_sn, String sign,String phone){
         Connection conn = Jsoup.connect(url+uuid)
+                .method(Connection.Method.POST)
                 .ignoreHttpErrors(true)
                 .ignoreContentType(true)
                 .header("Content-Type","application/json")
@@ -50,7 +51,7 @@ public class ElmService {
 
         String json = null;
         try {
-            json = conn.post().text();
+            json = conn.execute().body();
         } catch (IOException e) {
             log.info(json);
             log.error("请求失败:{}",e);
