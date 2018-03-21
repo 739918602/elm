@@ -26,8 +26,8 @@ public class ElmCtr {
     public String getMaxHongBao(Model mod,String phone,String hbUrl){
         return service.getMaxHongBao(mod,phone,hbUrl);
     }
-    /*@RequestMapping("/")
-    public ModelAndView welcome(){
-        return new ModelAndView("redirect:index.html");
-    }*/
+    @RequestMapping("/")
+    public String welcome(){
+        return "index";
+    }
 }

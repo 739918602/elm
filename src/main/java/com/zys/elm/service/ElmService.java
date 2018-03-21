@@ -89,7 +89,7 @@ public class ElmService {
             Update update = new Update();
             update.addToSet("elemeKey",elmCookie.getElemeKey());
             update.addToSet("uuid",elmCookie.getUuid());
-            UpdateResult result = template.upsert(query, update,ElmCookie.class);
+            WriteResult result = template.upsert(query, update,ElmCookie.class);
             log.info("添加成功!:{}",result);
             mod.addAttribute("addRes",new Response<>(true));
             return "index";
