@@ -112,6 +112,11 @@ public class ElmService {
             log.error("红包地址错误:{}",e);
             return "index";
         }
+        ElmCookie ck = template.findOne(new Query().addCriteria(Criteria.where("phone").is(phone)),ElmCookie.class);
+        if(ck==null){
+            mod.addAttribute("res",new Response<>("16","该手机号还未添加cookie"));
+            return "index";
+        }
         Query query = new Query();
         query.addCriteria(Criteria.where("phone").nin(phone));
         query.addCriteria(Criteria.where("available").nin(false));
@@ -137,9 +142,6 @@ public class ElmService {
                 int currentSize = hongBaoBean.getPromotion_records().size()+1;
                 if(currentSize == Integer.valueOf(lucky_number)){
                     i = currentSize;
-                    Query q = new Query();
-                    q.addCriteria(Criteria.where("phone").is(phone));
-                    ElmCookie ck = template.findOne(q,ElmCookie.class);
                     HongBaoBean maxHongBao = getInfo(ck.getUuid(),sn,ck.getElemeKey(),ck.getPhone());
                     log.info(maxHongBao.toString());
                     break;
