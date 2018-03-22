@@ -38,6 +38,10 @@ public class ElmService {
     @Autowired
     private MongoTemplate template;
     static String url = "https://h5.ele.me/restapi/marketing/promotion/weixin/";
+
+    public static void main(String[] args) {
+        getInfo("011128FE535B008C917DE1F000582ED2","29ec4aa7871c6c24","105ca86a7e5453c84cd3b7a85db53363","");
+    }
     public static HongBaoBean getInfo(String uuid,String group_sn, String sign,String phone){
         Connection conn = Jsoup.connect(url+uuid)
                 .method(Connection.Method.POST)
@@ -89,7 +93,7 @@ public class ElmService {
             Update update = new Update();
             update.addToSet("elemeKey",elmCookie.getElemeKey());
             update.addToSet("uuid",elmCookie.getUuid());
-            WriteResult result = template.upsert(query, update,ElmCookie.class);
+            WriteResult result = template.updateFirst(query, update,ElmCookie.class);
             log.info("添加成功!:{}",result);
             mod.addAttribute("addRes",new Response<>(true));
             return "index";
