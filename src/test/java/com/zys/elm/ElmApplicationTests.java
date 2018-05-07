@@ -5,6 +5,7 @@ import com.zys.elm.models.ElmCookie;
 import com.zys.elm.models.HongBaoBean;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.junit.Test;
@@ -22,9 +23,10 @@ import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.List;
+import java.util.concurrent.*;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+/*@RunWith(SpringRunner.class)
+@SpringBootTest*/
 @Slf4j
 public class ElmApplicationTests {
 	String url = "https://h5.ele.me/restapi/marketing/promotion/weixin/E5C59809F107C96E15816B55BCC81009";
@@ -69,12 +71,24 @@ public class ElmApplicationTests {
 		//template.insert(hongBaoBean);
 
 	}
+	private static ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(10,
+			new BasicThreadFactory.Builder().namingPattern("CMBC-Request-Pool-%d").daemon(true).build());
+
+	public static void main(String[] args) {
+
+	}
 	@Test
 	public void connTest(){
-		Query query = new Query();
-		query.addCriteria(Criteria.where("phone").nin("13023175728"));
-		query.addCriteria(Criteria.where("available").nin(false));
-		List<ElmCookie> cookies = template.find(query,ElmCookie.class);
-		System.out.println(JSONObject.toJSONString(cookies));
+		Future future = executorService.schedule((Callable<String>)()->{
+			Thread.sleep(1000);
+			return "";
+		},10L,TimeUnit.SECONDS);
+		try {
+			log.info("begin");
+			future.get(30L,TimeUnit.SECONDS);
+			log.info("end");
+		} catch (Exception e) {
+			log.info(e.getMessage());
+		}
 	}
 }
